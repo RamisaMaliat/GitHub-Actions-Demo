@@ -8,7 +8,15 @@ on:
 
 jobs:
   build:
-    runs-on: self-hosted  # This is the only change
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            java: 17
+          - os: windows-latest
+            java: 21
+      fail-fast: false
 
     steps:
       - name: Checkout code
