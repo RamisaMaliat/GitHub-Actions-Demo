@@ -1,0 +1,33 @@
+name: Manual CI with Fallback Runner
+
+on:
+  workflow_dispatch:
+    inputs:
+      useFallback:
+        description: 'Use fallback runner (ubuntu-latest)?'
+        required: true
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+
+jobs:
+  build:
+    runs-on: ${{ inputs.useFallback == 'true' && 'ubuntu-latest' || 'self-hosted' }}
+
+    steps:
+      - name: Print selected runner
+        run: echo "Running on ${{ runner.os }}"
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'corretto'
+          java-version: '21'
+
+      - name: Build with Gradle
+        run: ./gradlew build
